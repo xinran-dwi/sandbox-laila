@@ -3,9 +3,12 @@
 import { useState } from "react";
 
 /**
- * Plain <img> over a gradient placeholder.
- * Until the real crops from design-refs land in /public/img, a missing file
- * falls back to the gradient silently (no broken-image alt text).
+ * Photography cropped out of the reference frames by
+ * `scripts/measure-ref.py crop`, over a gradient placeholder.
+ *
+ * Visibility is NOT gated on `onLoad`: a cached image finishes loading before
+ * React attaches its handler, so the load event never fires and the image
+ * stays invisible. Only a genuine error hides it.
  */
 export function Photo({
   src,
@@ -18,7 +21,7 @@ export function Photo({
   className?: string;
   imgClassName?: string;
 }) {
-  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   return (
     <div
@@ -29,16 +32,14 @@ export function Photo({
         className,
       ].join(" ")}
     >
-      <img
-        src={src}
-        alt=""
-        onLoad={() => setLoaded(true)}
-        className={[
-          "size-full object-cover transition-opacity",
-          loaded ? "opacity-100" : "opacity-0",
-          imgClassName,
-        ].join(" ")}
-      />
+      {!failed && (
+        <img
+          src={src}
+          alt=""
+          onError={() => setFailed(true)}
+          className={["size-full object-cover", imgClassName].join(" ")}
+        />
+      )}
     </div>
   );
 }

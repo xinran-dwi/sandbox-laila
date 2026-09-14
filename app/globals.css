@@ -2,75 +2,134 @@
 
 /* ---------------------------------------------------------------------------
    Design tokens
-   Every color / radius used by a screen component comes from here.
-   Dark is the source of truth (sampled from the Figma frames).
-   Light is a first pass so the upcoming theme toggle has something to switch
-   to — it has NOT been verified against a light Figma frame yet.
+
+   Dark values are SAMPLED from design-refs/{mobile,desktop}.png, not estimated.
+   Run `python3 scripts/measure-ref.py compare` to check a build against them —
+   and note the references carry a display ICC profile, so every value here is
+   the sRGB conversion, never the raw pixel.
+
+   Light is a first pass derived from the corrected dark values. It has NOT been
+   checked against a light Figma frame.
 --------------------------------------------------------------------------- */
 
 :root,
 :root[data-theme="dark"] {
-  --surface-page: #0a0e41;
-  --surface-panel: #0e1350;
-  --surface-modal: #111656;
-  --surface-card: #1b2270;
-  --surface-card-hover: #232b83;
-  --surface-elevated: #232a7c;
-  --surface-overlay: rgb(9 12 45 / 0.72);
+  /* Surfaces. Both backgrounds carry a real top-lighter vertical gradient in
+     the frames — consistent across x in both, so it's design, not a vignette. */
+  --page-top: #0b1140;
+  --page-bottom: #00042d;
+  --panel-top: #070c3c;
+  --panel-bottom: #00042e;
+  /* Stops come from per-band medians, not single pixels: the references carry
+     about +/-5 of their own noise on a flat surface, so one sampled pixel is
+     not a colour. */
+  --gradient-page: linear-gradient(
+    180deg,
+    var(--page-top) 0%,
+    var(--page-top) 15%,
+    #060a38 60%,
+    #040634 80%,
+    var(--page-bottom) 100%
+  );
+  --gradient-panel: linear-gradient(
+    180deg,
+    var(--panel-top) 0%,
+    #050a36 33%,
+    #030833 55%,
+    #01052f 78%,
+    var(--panel-bottom) 100%
+  );
 
-  --border-subtle: #2c3486;
-  --border-strong: #3a44a3;
+  --surface-page: var(--page-top);
+  --surface-panel: var(--panel-top);
+  --surface-viewer: #00042f;
+  --surface-rail: #0c164b;
+  --surface-elevated: #2a2f53;
+  --surface-overlay: rgb(4 6 28 / 0.55);
 
-  --text-primary: #ffffff;
-  --text-secondary: #d7daf2;
-  --text-muted: #9aa0d0;
+  /* Card fills are solid, not translucent washes: sampled down a full card
+     column they hold their value while the page gradient moves underneath.
+     Mobile cards read bluer than the desktop panel's, which are greyer. */
+  --surface-card: #0f1b53;
+  --surface-card-hover: #16225f;
+  --surface-card-panel: #202549;
+  --surface-card-panel-hover: #292e57;
 
-  --accent-lime: #dde64f;
-  --accent-lime-ink: #10143f;
-  --accent-warn: #e4ed4f;
+  --border-subtle: #1b2048;
+  --border-strong: #2a3160;
 
-  --badge-business-bg: #dde64f;
-  --badge-business-ink: #10143f;
-  --badge-advanced-bg: #c6b3ff;
-  --badge-advanced-ink: #2c2168;
+  --text-primary: #f2f4fd;
+  --text-secondary: #c7cbdb;
+  --text-muted: #868cac;
 
-  --scrim: rgb(6 8 33 / 0.55);
+  --accent-lime: #d8e200;
+  --accent-lime-ink: #0b1024;
+  --accent-warn: #cfdc52;
+
+  --badge-business-bg: #d7e200;
+  --badge-business-ink: #21254a;
+  --badge-advanced-bg: #e6b9ff;
+  --badge-advanced-ink: #21254a;
+
+  --scrim: rgb(1 4 47 / 0.62);
 }
 
 :root[data-theme="light"] {
-  --surface-page: #f4f5fb;
-  --surface-panel: #ffffff;
-  --surface-modal: #ffffff;
-  --surface-card: #eef0fa;
-  --surface-card-hover: #e4e7f7;
+  --page-top: #f7f8fd;
+  --page-bottom: #eceef8;
+  --panel-top: #ffffff;
+  --panel-bottom: #f4f5fb;
+  --gradient-page: linear-gradient(
+    180deg,
+    var(--page-top) 0%,
+    var(--page-bottom) 100%
+  );
+  --gradient-panel: linear-gradient(
+    180deg,
+    var(--panel-top) 0%,
+    var(--panel-bottom) 100%
+  );
+
+  --surface-page: var(--page-top);
+  --surface-panel: var(--panel-top);
+  --surface-viewer: #e9ebf5;
+  --surface-rail: #ffffff;
   --surface-elevated: #ffffff;
   --surface-overlay: rgb(255 255 255 / 0.78);
 
-  --border-subtle: #dcdff0;
-  --border-strong: #c3c8e6;
+  --surface-card: rgb(11 16 36 / 0.06);
+  --surface-card-hover: rgb(11 16 36 / 0.1);
+  --surface-card-panel: rgb(11 16 36 / 0.05);
+  --surface-card-panel-hover: rgb(11 16 36 / 0.09);
 
-  --text-primary: #10143f;
-  --text-secondary: #3b4176;
-  --text-muted: #6b71a0;
+  --border-subtle: #dfe2f0;
+  --border-strong: #c4c9e0;
 
-  --accent-lime: #cdd733;
-  --accent-lime-ink: #10143f;
-  --accent-warn: #8a7a12;
+  --text-primary: #0b1024;
+  --text-secondary: #3a4066;
+  --text-muted: #6b7196;
 
-  --badge-business-bg: #dde64f;
-  --badge-business-ink: #10143f;
-  --badge-advanced-bg: #c6b3ff;
-  --badge-advanced-ink: #2c2168;
+  --accent-lime: #c9d200;
+  --accent-lime-ink: #0b1024;
+  --accent-warn: #7a8213;
 
-  --scrim: rgb(16 20 63 / 0.35);
+  --badge-business-bg: #d3de36;
+  --badge-business-ink: #21254a;
+  --badge-advanced-bg: #dcb7f6;
+  --badge-advanced-ink: #21254a;
+
+  --scrim: rgb(11 16 36 / 0.3);
 }
 
 @theme inline {
   --color-page: var(--surface-page);
   --color-panel: var(--surface-panel);
-  --color-modal: var(--surface-modal);
+  --color-viewer: var(--surface-viewer);
+  --color-rail: var(--surface-rail);
   --color-card: var(--surface-card);
   --color-card-hover: var(--surface-card-hover);
+  --color-card-panel: var(--surface-card-panel);
+  --color-card-panel-hover: var(--surface-card-panel-hover);
   --color-elevated: var(--surface-elevated);
   --color-overlay: var(--surface-overlay);
   --color-scrim: var(--scrim);
@@ -96,6 +155,15 @@
   --radius-image: 16px;
 
   --font-sans: var(--font-poppins);
+}
+
+/* Gradient surfaces need background-image, so they're classes rather than
+   color utilities. Still token-driven — no component holds a color. */
+.surface-page {
+  background-image: var(--gradient-page);
+}
+.surface-panel {
+  background-image: var(--gradient-panel);
 }
 
 body {

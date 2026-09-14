@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 export type Viewport = "desktop" | "mobile";
 
 const SIZES: Record<Viewport, { w: number; h: number }> = {
-  desktop: { w: 1440, h: 930 },
+  desktop: { w: 1440, h: 931 },
   mobile: { w: 390, h: 844 },
 };
 
@@ -63,7 +63,7 @@ export function DeviceFrame({
             transformOrigin: "top left",
           }}
           className={[
-            "absolute left-0 top-0 border-0 bg-[#0a0e41]",
+            "absolute left-0 top-0 border-0 bg-page",
             viewport === "mobile"
               ? "rounded-[38px] shadow-[0_24px_60px_rgba(0,0,0,0.45)]"
               : "rounded-[10px] shadow-[0_24px_60px_rgba(0,0,0,0.45)]",

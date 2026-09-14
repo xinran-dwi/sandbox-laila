@@ -40,15 +40,15 @@ function RailItem({
       ].join(" ")}
     >
       <Icon className="size-[19px]" strokeWidth={1.5} />
-      <span className="text-[10px] leading-none">{label}</span>
+      <span className="text-[9.5px] leading-none">{label}</span>
     </button>
   );
 }
 
+/* Measured: rail occupies x0-71 — 72px wide. */
 export function DesktopRail() {
   return (
-    <aside className="flex w-[84px] shrink-0 flex-col items-center bg-page py-5">
-      {/* Logo */}
+    <aside className="flex w-[72px] shrink-0 flex-col items-center bg-rail py-5">
       <div className="flex items-center gap-1">
         <span className="text-[11px] font-semibold leading-[1.1] text-ink">
           Daem

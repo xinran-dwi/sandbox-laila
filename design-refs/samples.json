@@ -1,0 +1,103 @@
+{
+  "_comment": "Design-px coordinates sampled by scripts/measure-ref.py. Each point sits inside a flat region of one surface so the sampled value is that surface's color, not an antialiased edge. Keep them off text strokes and off the photography.",
+  "mobile": {
+    "design": [
+      390,
+      844
+    ],
+    "points": {
+      "page-top": [
+        195,
+        20
+      ],
+      "page-header": [
+        8,
+        110
+      ],
+      "page-mid": [
+        8,
+        550
+      ],
+      "page-bottom": [
+        8,
+        760
+      ],
+      "card-row1": [
+        45,
+        552
+      ],
+      "card-row2": [
+        45,
+        618
+      ],
+      "card-row3": [
+        45,
+        696
+      ],
+      "cta-fill": [
+        60,
+        800
+      ],
+      "gutter-beside-card": [
+        10,
+        545
+      ]
+    }
+  },
+  "desktop": {
+    "design": [
+      1440,
+      931
+    ],
+    "points": {
+      "panel-top": [
+        1430,
+        140
+      ],
+      "panel-mid": [
+        1430,
+        500
+      ],
+      "panel-bottom": [
+        1430,
+        860
+      ],
+      "viewer-bg": [
+        300,
+        60
+      ],
+      "viewer-bg-low": [
+        180,
+        860
+      ],
+      "rail-bg": [
+        40,
+        500
+      ],
+      "card-row1": [
+        1300,
+        110
+      ],
+      "card-row2": [
+        1180,
+        160
+      ],
+      "card-row3": [
+        1300,
+        225
+      ],
+      "badge-business": [
+        1091,
+        124
+      ],
+      "badge-advanced": [
+        1086,
+        248
+      ],
+      "cta-fill": [
+        1000,
+        878
+      ]
+    }
+  }
+}

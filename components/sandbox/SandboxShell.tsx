@@ -59,7 +59,7 @@ export function SandboxShell({ screen }: { screen: string }) {
         </div>
 
         <span className="text-[11px] text-white/35">
-          {viewport === "desktop" ? "1440 × 930" : "390 × 844"}
+          {viewport === "desktop" ? "1440 × 931" : "390 × 844"}
         </span>
 
         {/* Seams for the next milestone: theme toggle, interaction inspector,

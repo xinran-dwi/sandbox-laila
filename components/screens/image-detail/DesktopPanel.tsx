@@ -11,9 +11,7 @@ function Divider() {
 }
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="mb-2 text-[15px] font-normal text-ink">{children}</h2>
-  );
+  return <h2 className="mb-2 text-[13.5px] font-normal text-ink">{children}</h2>;
 }
 
 function EditIcons() {
@@ -32,13 +30,17 @@ function EditIcons() {
   );
 }
 
+/**
+ * Measured: panel spans x939-1440 (501 wide). Content column x956-1365 (409),
+ * then a 12px gap, the 53px thumbnail rail, and a 10px right margin.
+ * Action grid sits at y87.5; CTA is 408 x 39 ending 22px above the bottom.
+ */
 export function DesktopPanel() {
   return (
-    <div className="flex w-[500px] shrink-0 bg-panel">
-      <div className="flex min-w-0 flex-1 flex-col pl-[14px] pr-[10px] pb-[22px] pt-[27px]">
-        {/* Title row */}
+    <div className="surface-panel flex w-[501px] shrink-0">
+      <div className="flex min-w-0 flex-1 flex-col pb-[22px] pl-[17px] pr-0 pt-[27px]">
         <div className="flex h-[26px] items-center justify-between">
-          <h1 className="text-[17px] font-normal text-ink">
+          <h1 className="text-[14px] font-normal text-ink">
             {imageDetail.desktopTitle}{" "}
             <span className="text-ink-muted">{imageDetail.age}</span>
           </h1>
@@ -55,7 +57,7 @@ export function DesktopPanel() {
           </div>
         </div>
 
-        <div className="scrollbar-slim mt-10 min-h-0 flex-1 overflow-y-auto pr-1">
+        <div className="scrollbar-slim mt-[34px] min-h-0 flex-1 overflow-y-auto">
           <ActionGrid variant="desktop" />
 
           <Divider />
@@ -75,9 +77,9 @@ export function DesktopPanel() {
               <Photo
                 src={imageDetail.referenceImage.src}
                 alt={imageDetail.referenceImage.caption}
-                className="aspect-square w-full rounded-lg"
+                className="h-[112px] w-full rounded-lg"
               />
-              <p className="mt-2 text-center text-[11px] text-ink-secondary">
+              <p className="mt-1.5 text-center text-[10px] text-ink-secondary">
                 {imageDetail.referenceImage.caption}
               </p>
             </div>
