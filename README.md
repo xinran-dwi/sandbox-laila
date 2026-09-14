@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Design Sandbox
 
-## Getting Started
-
-First, run the development server:
+A code-based reproduction of the Figma designs, built so motion and microinteraction ideas
+can be explored in a real browser and handed to engineers as reference code.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `/` — screen index
+- `/sandbox/image-detail` — sandbox shell: desktop / mobile toggle around a live preview
+- `/preview/image-detail` — the screen on its own, no sandbox chrome
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How it's put together
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**The preview route is the deliverable.** `/preview/*` renders a normal responsive page with
+normal Tailwind breakpoints and no awareness that a sandbox exists. That's the code engineers
+read and copy.
 
-## Learn More
+**The sandbox wraps it in an iframe.** `components/sandbox/DeviceFrame.tsx` sizes the iframe
+to a true 1440×930 or 390×844, so the page's own media queries fire exactly as they would on
+a real device — no transform tricks, no container-query rewrite of the page code. It scales
+down only when the window can't fit the frame 1:1.
 
-To learn more about Next.js, take a look at the following resources:
+**Every color and radius is a token.** `app/globals.css` defines the whole palette twice,
+under `[data-theme="dark"]` and `[data-theme="light"]`. Components reference token-backed
+utilities (`bg-card`, `text-ink-muted`, `bg-lime`) and never a raw hex — that's what keeps the
+theme toggle a one-file change.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Copy and asset paths live in fixtures.** `lib/fixtures/image-detail.ts` holds every string
+and image path on the screen.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Layout
 
-## Deploy on Vercel
+```
+app/
+  preview/image-detail/   the real page
+  sandbox/[screen]/       the shell around it
+components/
+  screens/image-detail/   one component per region of the screen
+  sandbox/                shell + device frame
+lib/fixtures/             copy and asset paths
+design-refs/              the Figma exports this is measured against
+shots/                    verification screenshots
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Fidelity
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`FIDELITY_REPORT.md` records how closely this matches the Figma frames, what was measured,
+what's still approximate, and why. Read it before assuming a value is intentional.
+
+## Next
+
+Theme toggle, viewport switching beyond the two presets, an interaction inspector, and a
+code-view panel — the toolbar carries visible stubs where each one lands.
