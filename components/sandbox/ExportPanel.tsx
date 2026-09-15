@@ -2,8 +2,7 @@
 
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { renderPortable, renderTailwind } from "@/lib/sandbox/css";
-import { exportSnippet } from "@/lib/sandbox/runtimes/burst";
+import { kfName, renderPortable, renderTailwind } from "@/lib/sandbox/css";
 import type { EffectDef, ParamValues, TargetDef } from "@/lib/sandbox/types";
 
 /**
@@ -20,7 +19,17 @@ export function ExportPanel({
   values: ParamValues;
   target: TargetDef;
 }) {
-  const tabs = ["CSS", "Tailwind", ...(effect.portability === "css+js" ? ["JS"] : [])];
+  // Only offer the JS tab when this effect actually has a snippet — otherwise
+  // it would show another effect's code, which is exactly the kind of lying
+  // export the one-payload-three-renderers design exists to prevent.
+  const spec = effect.particles;
+  // Substitute the real keyframe name. The snippet can't know it — the renderer
+  // namespaces keyframes, so a hardcoded name would reference an animation the
+  // CSS tab never defines.
+  const snippet = spec
+    ? spec.exportSnippet.replaceAll("%KEYFRAME%", kfName(effect.id, spec.keyframe))
+    : undefined;
+  const tabs = ["CSS", "Tailwind", ...(snippet ? ["JS"] : [])];
   const [tab, setTab] = useState(tabs[0]);
   const [copied, setCopied] = useState(false);
 
@@ -30,7 +39,7 @@ export function ExportPanel({
       ? `/* ${target.file} */\n\n${renderPortable(effect, values)}`
       : tab === "Tailwind"
         ? `${tailwind.theme}\n\n<!-- ${target.file} -->\nclass="${tailwind.classes}"`
-        : exportSnippet;
+        : (snippet ?? "");
 
   const copy = async () => {
     try {

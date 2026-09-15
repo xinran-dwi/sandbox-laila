@@ -24,18 +24,30 @@ export const CHANNEL = "sandbox-bridge";
 export type Theme = "dark" | "light";
 
 /**
- * Armed confetti. The shell sends the tuned numbers; the preview spawns the
- * particles and lets CSS move them.
+ * An armed particle effect. Plain data only — the effect's `place` function
+ * can't cross a structured clone, so the preview looks the effect up by id in
+ * the shared registry and calls it there. Both frames run the same bundle.
  */
-export type BurstConfig = {
+export type ParticleConfig = {
   targetId: string;
+  /** Looked up in the effect registry on the preview side. */
+  effectId: string;
   /** Prefixed keyframe name from the effect renderer. */
   keyframe: string;
   count: number;
-  distance: number;
   size: number;
   duration: number;
+  easing: string;
+  stagger: number;
   colors: string[];
+  /** Tuned param values, so the preview can run `place` with them. */
+  values: Record<string, string | number>;
+  /**
+   * Tuned values as custom properties, applied to the particle LAYER. Particles
+   * sit on document.body, outside the target's subtree, so without this every
+   * keyframe-resident param silently falls back to its default.
+   */
+  vars: Record<string, string>;
   /** Only fire when the clicked element ends up in this state. */
   when?: { attr: string; equals: string };
 };
@@ -51,7 +63,7 @@ export type SandboxState = {
   flags: string[];
   /** Bumped to replay a one-shot animation. */
   play: number;
-  burst: BurstConfig | null;
+  burst: ParticleConfig | null;
 };
 
 export const DEFAULT_STATE: SandboxState = {

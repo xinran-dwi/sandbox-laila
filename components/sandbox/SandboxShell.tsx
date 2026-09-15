@@ -10,7 +10,7 @@ import {
 import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import { kfName, renderPreview } from "@/lib/sandbox/css";
 import { findEffect } from "@/lib/sandbox/effects";
-import type { BurstConfig, SandboxState } from "@/lib/sandbox/protocol";
+import type { ParticleConfig, SandboxState } from "@/lib/sandbox/protocol";
 import {
   getSelection,
   getServerSelection,
@@ -25,7 +25,7 @@ import {
   setTheme,
   subscribeTheme,
 } from "@/lib/sandbox/themeStore";
-import { formatValue } from "@/lib/sandbox/types";
+import { formatValue, tunedVarsFor } from "@/lib/sandbox/types";
 import { DeviceFrame, type Viewport } from "./DeviceFrame";
 import { InteractionPanel } from "./InteractionPanel";
 import { useSandboxBridge } from "./useSandboxBridge";
@@ -98,24 +98,51 @@ export function SandboxShell({ screen }: { screen: string }) {
     return renderPreview(effect, selection.values, target.id);
   }, [effect, target, selection.values]);
 
-  const burst = useMemo<BurstConfig | null>(() => {
-    if (!effect || !target || effect.trigger.type !== "event") return null;
-    const read = (id: string, fallback: number) => {
-      const v = selection.values[id];
-      return typeof v === "number" ? v : fallback;
+  // Built from the effect's own particle spec rather than by guessing param
+  // names, so a new particle effect needs no change here.
+  const burst = useMemo<ParticleConfig | null>(() => {
+    const spec = effect?.particles;
+    if (!effect || !target || !spec || effect.trigger.type !== "event") return null;
+
+    const num = (paramId: string | undefined, fallback: number) => {
+      if (!paramId) return fallback;
+      const param = effect.params.find((p) => p.id === paramId);
+      const value = selection.values[paramId] ?? param?.default;
+      return typeof value === "number" ? value : fallback;
     };
-    const paletteParam = effect.params.find((p) => p.id === "palette");
-    const palette = paletteParam
-      ? formatValue(paletteParam, selection.values.palette ?? paletteParam.default)
-      : "";
+
+    const colorParam = effect.params.find((p) => p.id === spec.colorParam);
+    const colors = colorParam
+      ? formatValue(
+          colorParam,
+          selection.values[spec.colorParam] ?? colorParam.default,
+        )
+          .split(",")
+          .map((c) => c.trim())
+          .filter(Boolean)
+      : [];
+
     return {
       targetId: target.id,
-      keyframe: kfName(effect.id, "fly"),
-      count: read("count", 18),
-      distance: read("distance", 90),
-      size: read("size", 7),
-      duration: read("duration", 900),
-      colors: palette.split(",").map((c) => c.trim()).filter(Boolean),
+      effectId: effect.id,
+      keyframe: kfName(effect.id, spec.keyframe),
+      count: num(spec.countParam, 16),
+      size: num(spec.sizeParam, 7),
+      duration: num("duration", 900),
+      easing: (() => {
+        const p = spec.easingParam
+          ? effect.params.find((x) => x.id === spec.easingParam)
+          : undefined;
+        return p
+          ? formatValue(p, selection.values[p.id] ?? p.default)
+          : spec.easing;
+      })(),
+      stagger: num(spec.staggerParam, 0),
+      colors,
+      values: selection.values,
+      // Particles live outside the target's subtree, so they inherit nothing
+      // from it. Without this every keyframe-resident param is a dead slider.
+      vars: tunedVarsFor(effect, selection.values),
       when: effect.trigger.when,
     };
   }, [effect, target, selection.values]);

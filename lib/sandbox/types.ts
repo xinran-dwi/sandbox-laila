@@ -134,6 +134,50 @@ export type EffectTrigger =
  */
 export type Portability = "css" | "css+js";
 
+/**
+ * How an event-triggered effect spawns particles.
+ *
+ * The runtime knows how to create, colour, stagger and clean up elements. It
+ * does NOT know where they go — `place` owns that, so a new particle effect is
+ * still a data change rather than new runtime code.
+ */
+export type ParticleSpec = {
+  /** Unprefixed keyframe the particles run. */
+  keyframe: string;
+  /** Param ids the RUNTIME reads, as opposed to the ones the keyframe reads. */
+  countParam: string;
+  sizeParam: string;
+  colorParam: string;
+  staggerParam?: string;
+  /**
+   * The runtime sets animation-timing-function inline, which beats the
+   * keyframe shorthand — so an effect that wants a tunable curve has to name
+   * the param here or the slider would be silently overridden.
+   */
+  easingParam?: string;
+  /** Used when `easingParam` is absent. */
+  easing: string;
+  /**
+   * Each particle's own custom properties. Pure: index in, declarations out.
+   * Burst places radially (--x/--y); the spiral places on a circle (--a0/--rad).
+   */
+  place: (
+    i: number,
+    n: number,
+    values: ParamValues,
+  ) => Record<string, string>;
+  /**
+   * Shown in the panel's JS tab. Hand-written, and deliberately kept next to
+   * `place` — a runtime can't be mechanically turned into readable example
+   * code, so this is the one spot that needs keeping in step by hand.
+   *
+   * Write `%KEYFRAME%` wherever the animation name goes; the panel substitutes
+   * the real, namespaced name. Hardcoding it silently produces a snippet that
+   * references an animation the CSS tab never defines.
+   */
+  exportSnippet: string;
+};
+
 export type EffectDef = {
   id: string;
   name: string;
@@ -145,9 +189,28 @@ export type EffectDef = {
   params: EffectParam[];
   /** `v("duration")` returns `var(--fx-…-duration, 320ms)`. */
   css: (v: (paramId: string) => string) => CssPayload;
+  /** Required when `trigger.type === "event"`. */
+  particles?: ParticleSpec;
   /** Emitted as a comment in the export. */
   notes?: string;
 };
+
+/**
+ * The tuned values as custom properties. Needed twice: in the CSS rule on the
+ * target, and on the particle layer — particles live on document.body, outside
+ * the target's subtree, so they inherit nothing from it.
+ */
+export function tunedVarsFor(
+  effect: EffectDef,
+  values: ParamValues,
+): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const param of effect.params) {
+    const value = values[param.id];
+    out[param.cssVar] = formatValue(param, value ?? param.default);
+  }
+  return out;
+}
 
 /** Appends the unit so `320` becomes `320ms` before it reaches CSS. */
 export function formatValue(

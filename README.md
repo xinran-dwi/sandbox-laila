@@ -135,11 +135,20 @@ arbitrary-property utilities.
 `pseudo-after`, so it is never offered on a bare `<img>` (replaced elements can't host
 generated content) or on a button with no loading state.
 
+Particle effects are data too. An effect that spawns particles declares a `particles` block —
+which keyframe, which params the runtime reads, and a pure `place(i, n, values)` returning that
+particle's own custom properties. `runtimes/particles.ts` creates, colours, staggers and cleans
+up elements and knows nothing about shape, so burst (radial) and spiral (helix) share it
+untouched. `place` is a function and can't cross a structured clone, so it doesn't: the preview
+looks the effect up in the shared registry and calls it there, which keeps per-click randomness.
+
 Two things are deliberately not derived. Confetti needs real JS to spawn particles, so it is
-marked `+JS` in the panel and its export snippet is hand-written and colocated with the runtime
-in `lib/sandbox/runtimes/burst.ts` — the one place with genuine duplication. And the loading
-state is **simulated**, not observed: `Photo.tsx` documents why a real `onLoad` can't be
-trusted, so the panel sets a flag for a chosen duration instead.
+marked `+JS` in the panel and each particle effect carries its own hand-written snippet next to
+its `place` — the one place with genuine duplication. Write `%KEYFRAME%` in a snippet rather
+than the animation name; the panel substitutes the real namespaced one, because a hardcoded
+name silently references an animation the CSS tab never defines. And the loading state is
+**simulated**, not observed: `Photo.tsx` documents why a real `onLoad` can't be trusted, so the
+panel sets a flag for a chosen duration instead.
 
 ## Next
 

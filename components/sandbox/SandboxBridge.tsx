@@ -10,7 +10,8 @@ import {
   type ChildMessage,
   type SandboxState,
 } from "@/lib/sandbox/protocol";
-import { PARTICLE_ATTR, spawnBurst } from "@/lib/sandbox/runtimes/burst";
+import { findEffect } from "@/lib/sandbox/effects";
+import { PARTICLE_ATTR, spawnParticles } from "@/lib/sandbox/runtimes/particles";
 
 /**
  * The preview side of the bridge. Applies whatever the sandbox shell sends:
@@ -135,9 +136,18 @@ export function SandboxBridge() {
     const burst = state.burst;
     if (!burst) return;
 
+    const spec = findEffect(burst.effectId)?.particles;
+    if (!spec) return;
+
     const layer = document.createElement("div");
     layer.style.cssText =
       "position:fixed;inset:0;pointer-events:none;z-index:2147483647";
+    // The tuned values, so keyframe-resident params actually resolve. Particles
+    // sit here on document.body, outside the target's subtree, and inherit
+    // nothing from it — without this every var() falls back to its default.
+    for (const [prop, value] of Object.entries(burst.vars)) {
+      layer.style.setProperty(prop, value);
+    }
     document.body.append(layer);
 
     // One capture-phase listener. By click time the target is just DOM, so it
@@ -152,10 +162,19 @@ export function SandboxBridge() {
 
       const fire = () => {
         const box = el.getBoundingClientRect();
-        spawnBurst(document, layer, {
-          x: box.left + box.width / 2,
-          y: box.top + box.height / 2,
-        }, burst);
+        // `place` is a function, so it can't cross the postMessage boundary.
+        // It doesn't need to — both frames run the same bundle, so we look the
+        // effect up here and keep the per-click randomness.
+        const placements = Array.from({ length: burst.count }, (_, i) =>
+          spec.place(i, burst.count, burst.values),
+        );
+        spawnParticles(
+          document,
+          layer,
+          { x: box.left + box.width / 2, y: box.top + box.height / 2 },
+          burst,
+          placements,
+        );
       };
 
       // Wait a frame so React's state update has committed before reading the
