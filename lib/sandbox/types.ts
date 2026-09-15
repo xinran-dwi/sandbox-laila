@@ -167,6 +167,15 @@ export type ParticleSpec = {
     values: ParamValues,
   ) => Record<string, string>;
   /**
+   * SVG markup each particle carries, instead of being a plain coloured box.
+   * Authored here as a constant — never user input — because the runtime
+   * assigns it with innerHTML.
+   *
+   * Use fill="currentColor", so the palette colours the glyph through the
+   * element's `color` rather than through a background.
+   */
+  glyph?: string;
+  /**
    * Shown in the panel's JS tab. Hand-written, and deliberately kept next to
    * `place` — a runtime can't be mechanically turned into readable example
    * code, so this is the one spot that needs keeping in step by hand.

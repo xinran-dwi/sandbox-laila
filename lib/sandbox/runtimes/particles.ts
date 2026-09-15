@@ -29,9 +29,18 @@ export function spawnParticles(
     particle.style.top = `${origin.y}px`;
     particle.style.width = `${config.size}px`;
     particle.style.height = `${config.size}px`;
-    particle.style.borderRadius = i % 3 === 0 ? "2px" : "50%";
-    particle.style.background =
-      config.colors[i % config.colors.length] ?? "currentColor";
+
+    const tint = config.colors[i % config.colors.length] ?? "currentColor";
+    if (config.glyph) {
+      // A constant authored in the effect definition, never user input.
+      particle.innerHTML = config.glyph;
+      // Colour reaches the SVG through currentColor, not a background.
+      particle.style.color = tint;
+      particle.style.lineHeight = "0";
+    } else {
+      particle.style.borderRadius = i % 3 === 0 ? "2px" : "50%";
+      particle.style.background = tint;
+    }
 
     for (const [prop, value] of Object.entries(placements[i] ?? {})) {
       particle.style.setProperty(prop, value);

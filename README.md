@@ -136,10 +136,10 @@ arbitrary-property utilities.
 generated content) or on a button with no loading state.
 
 Particle effects are data too. An effect that spawns particles declares a `particles` block —
-which keyframe, which params the runtime reads, and a pure `place(i, n, values)` returning that
-particle's own custom properties. `runtimes/particles.ts` creates, colours, staggers and cleans
-up elements and knows nothing about shape, so burst (radial) and spiral (helix) share it
-untouched. `place` is a function and can't cross a structured clone, so it doesn't: the preview
+which keyframe, which params the runtime reads, an optional `glyph` (SVG the particle carries
+instead of being a coloured box), and a pure `place(i, n, values)` returning that particle's own
+custom properties. `runtimes/particles.ts` creates, colours, staggers and cleans up elements and
+knows nothing about shape, so the radial burst and the thumbs-up fountain share it untouched. `place` is a function and can't cross a structured clone, so it doesn't: the preview
 looks the effect up in the shared registry and calls it there, which keeps per-click randomness.
 
 Two things are deliberately not derived. Confetti needs real JS to spawn particles, so it is

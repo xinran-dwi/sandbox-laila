@@ -139,6 +139,7 @@ export function SandboxShell({ screen }: { screen: string }) {
       })(),
       stagger: num(spec.staggerParam, 0),
       colors,
+      glyph: spec.glyph,
       values: selection.values,
       // Particles live outside the target's subtree, so they inherit nothing
       // from it. Without this every keyframe-resident param is a dead slider.

@@ -40,6 +40,8 @@ export type ParticleConfig = {
   easing: string;
   stagger: number;
   colors: string[];
+  /** SVG markup each particle carries, when the effect declares one. */
+  glyph?: string;
   /** Tuned param values, so the preview can run `place` with them. */
   values: Record<string, string | number>;
   /**

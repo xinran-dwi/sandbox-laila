@@ -1,15 +1,15 @@
 import type { EffectDef, TargetDef } from "../types";
 import { burst } from "./burst";
+import { fountain } from "./fountain";
 import { pop } from "./pop";
 import { press } from "./press";
 import { shimmer } from "./shimmer";
-import { spiral } from "./spiral";
 
 /**
  * The registry. Adding effect #20 means importing it and appending it here —
  * the panel renders its controls from the param schema and needs no changes.
  */
-export const effects: EffectDef[] = [press, pop, shimmer, burst, spiral];
+export const effects: EffectDef[] = [press, pop, shimmer, burst, fountain];
 
 export function findEffect(id: string) {
   return effects.find((e) => e.id === id) ?? null;
