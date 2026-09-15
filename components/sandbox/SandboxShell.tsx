@@ -30,7 +30,7 @@ import { DeviceFrame, type Viewport } from "./DeviceFrame";
 import { InteractionPanel } from "./InteractionPanel";
 import { useSandboxBridge } from "./useSandboxBridge";
 
-const screens = [{ id: "image-detail", label: "Image Detail" }];
+const screens = [{ id: "image-detail", label: "Design Sandbox" }];
 
 function ToolbarButton({
   active,
@@ -66,7 +66,7 @@ function Segmented({ children }: { children: React.ReactNode }) {
 }
 
 export function SandboxShell({ screen }: { screen: string }) {
-  const [viewport, setViewport] = useState<Viewport>("desktop");
+  const [viewport, setViewport] = useState<Viewport>("mobile");
   const [loading, setLoading] = useState(false);
   const [play, setPlay] = useState(0);
 
