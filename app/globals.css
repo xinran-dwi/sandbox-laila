@@ -14,6 +14,8 @@
 
 :root,
 :root[data-theme="dark"] {
+  color-scheme: dark;
+
   /* Surfaces. Both backgrounds carry a real top-lighter vertical gradient in
      the frames — consistent across x in both, so it's design, not a vignette. */
   --page-top: #0b1140;
@@ -55,6 +57,13 @@
   --surface-card-panel: #202549;
   --surface-card-panel-hover: #292e57;
 
+  /* Alpha washes. These sit ON TOP of whatever surface is underneath, so they
+     cannot be flat hexes — they have to invert with the theme or they vanish.
+     --surface-skeleton is shared with the sandbox loading shimmer. */
+  --surface-skeleton: rgb(255 255 255 / 0.2);
+  --surface-chip: rgb(255 255 255 / 0.09);
+  --surface-chip-hover: rgb(255 255 255 / 0.15);
+
   --border-subtle: #1b2048;
   --border-strong: #2a3160;
 
@@ -75,6 +84,8 @@
 }
 
 :root[data-theme="light"] {
+  color-scheme: light;
+
   --page-top: #f7f8fd;
   --page-bottom: #eceef8;
   --panel-top: #ffffff;
@@ -101,6 +112,10 @@
   --surface-card-hover: rgb(11 16 36 / 0.1);
   --surface-card-panel: rgb(11 16 36 / 0.05);
   --surface-card-panel-hover: rgb(11 16 36 / 0.09);
+
+  --surface-skeleton: rgb(11 16 36 / 0.1);
+  --surface-chip: rgb(11 16 36 / 0.07);
+  --surface-chip-hover: rgb(11 16 36 / 0.12);
 
   --border-subtle: #dfe2f0;
   --border-strong: #c4c9e0;
@@ -131,6 +146,9 @@
   --color-card-panel: var(--surface-card-panel);
   --color-card-panel-hover: var(--surface-card-panel-hover);
   --color-elevated: var(--surface-elevated);
+  --color-skeleton: var(--surface-skeleton);
+  --color-chip: var(--surface-chip);
+  --color-chip-hover: var(--surface-chip-hover);
   --color-overlay: var(--surface-overlay);
   --color-scrim: var(--scrim);
 

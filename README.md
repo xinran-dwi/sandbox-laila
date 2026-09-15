@@ -9,7 +9,8 @@ pnpm dev
 ```
 
 - `/` — screen index
-- `/sandbox/image-detail` — sandbox shell: desktop / mobile toggle around a live preview
+- `/sandbox/image-detail` — sandbox shell: desktop / mobile and dark / light toggles around a
+  live preview
 - `/preview/image-detail` — the screen on its own, no sandbox chrome
 
 ## How it's put together
@@ -26,8 +27,22 @@ down only when the window can't fit the frame 1:1.
 **Every color and radius is a token, and the dark values are measured.** `app/globals.css`
 defines the whole palette twice, under `[data-theme="dark"]` and `[data-theme="light"]`.
 Components reference token-backed utilities (`bg-card`, `text-ink-muted`, `bg-lime`) and never
-a raw hex — that's what keeps the theme toggle a one-file change, and what made correcting the
-entire palette a single-file edit.
+a raw hex — that's what made correcting the entire palette a single-file edit.
+
+That discipline was not actually airtight. An earlier version of this file claimed it kept the
+theme toggle "a one-file change"; it didn't, because `DesktopViewer` painted its whole backdrop
+in `bg-white/20` and its nav arrows in `bg-white/[0.09]`. Both vanish on a light surface. Alpha
+washes that sit *on top* of a surface need their own inverting tokens — `--surface-skeleton`,
+`--surface-chip`, `--surface-chip-hover` — not a flat hex and not a bare white.
+
+**The shell drives the screen over a postMessage bridge.** `components/sandbox/SandboxBridge.tsx`
+runs inside the preview and applies what the shell sends it; `useSandboxBridge` is the shell half.
+Two rules keep it honest: messages carry a full snapshot rather than a delta, and the handshake is
+child-initiated — the preview announces itself on every mount and the shell replies with current
+state. That makes Fast Refresh, manual reload and viewport switching self-healing without
+detecting any of them, because `iframe.onload` fires before React hydrates and is not a readiness
+signal. The bridge no-ops when `window.parent === window`, so opening `/preview/*` directly gives
+you the untouched deliverable.
 
 **Copy and asset paths live in fixtures.** `lib/fixtures/image-detail.ts` holds every string
 and image path on the screen.
@@ -78,7 +93,17 @@ shots/                    verification screenshots
 what's still approximate, and why — including a correction of what an earlier pass got wrong
 and how its method let that through. Read it before assuming a value is intentional.
 
+## Theme
+
+The toolbar toggles dark / light; the preference persists per browser. Dark is the default and
+what the design was measured against.
+
+**Light is invented.** It was derived from the corrected dark values and has never been checked
+against a light Figma frame — see `FIDELITY_REPORT.md`. Treat it as a starting point to react to,
+not a verified design.
+
 ## Next
 
-Theme toggle, viewport switching beyond the two presets, an interaction inspector, and a
-code-view panel — the toolbar carries visible stubs where each one lands.
+A motion panel for exploring microinteractions on registered components, viewport switching
+beyond the two presets, and a code-view panel — the toolbar carries a visible stub where the
+motion panel lands.

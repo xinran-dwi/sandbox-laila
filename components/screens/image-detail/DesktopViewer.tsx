@@ -9,24 +9,24 @@ function BackdropStandIn() {
       <div className="absolute inset-0 scale-105 opacity-[0.22] blur-[7px]">
         <div className="flex h-full flex-col gap-6 p-10">
           <div className="flex items-center gap-4">
-            <div className="h-9 w-64 rounded-full bg-white/25" />
-            <div className="ml-auto h-9 w-28 rounded-full bg-white/20" />
-            <div className="h-9 w-28 rounded-full bg-white/20" />
+            <div className="h-9 w-64 rounded-full bg-skeleton" />
+            <div className="ml-auto h-9 w-28 rounded-full bg-skeleton" />
+            <div className="h-9 w-28 rounded-full bg-skeleton" />
           </div>
           <div className="flex gap-5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-24 w-32 rounded-2xl bg-white/20" />
+              <div key={i} className="h-24 w-32 rounded-2xl bg-skeleton" />
             ))}
           </div>
-          <div className="h-5 w-40 rounded-full bg-white/20" />
+          <div className="h-5 w-40 rounded-full bg-skeleton" />
           <div className="flex gap-5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="h-40 w-52 rounded-2xl bg-white/15" />
+              <div key={i} className="h-40 w-52 rounded-2xl bg-skeleton opacity-80" />
             ))}
           </div>
           <div className="mt-auto flex gap-5">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-28 w-56 rounded-2xl bg-white/10" />
+              <div key={i} className="h-28 w-56 rounded-2xl bg-skeleton opacity-60" />
             ))}
           </div>
         </div>
@@ -44,8 +44,8 @@ function ArrowButton({ side, label }: { side: "left" | "right"; label: string })
       aria-label={label}
       className={[
         "absolute top-1/2 z-10 flex size-[48px] -translate-y-1/2 items-center justify-center",
-        "rounded-full bg-white/[0.09] text-ink backdrop-blur-sm",
-        "transition-colors hover:bg-white/15",
+        "rounded-full bg-chip text-ink backdrop-blur-sm",
+        "transition-colors hover:bg-chip-hover",
         side === "left" ? "left-[25px]" : "right-[25px]",
       ].join(" ")}
     >

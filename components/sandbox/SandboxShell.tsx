@@ -1,8 +1,21 @@
 "use client";
 
-import { Monitor, Smartphone, SquareArrowOutUpRight } from "lucide-react";
-import { useState } from "react";
+import {
+  Monitor,
+  Moon,
+  Smartphone,
+  SquareArrowOutUpRight,
+  Sun,
+} from "lucide-react";
+import { useMemo, useState, useSyncExternalStore } from "react";
+import {
+  getServerTheme,
+  getTheme,
+  setTheme,
+  subscribeTheme,
+} from "@/lib/sandbox/themeStore";
 import { DeviceFrame, type Viewport } from "./DeviceFrame";
+import { useSandboxBridge } from "./useSandboxBridge";
 
 const screens = [{ id: "image-detail", label: "Image Detail" }];
 
@@ -31,17 +44,33 @@ function ToolbarButton({
   );
 }
 
+function Segmented({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-1 rounded-full bg-white/[0.06] p-1">
+      {children}
+    </div>
+  );
+}
+
 export function SandboxShell({ screen }: { screen: string }) {
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const src = `/preview/${screen}`;
   const label = screens.find((s) => s.id === screen)?.label ?? screen;
+
+  // The shell owns the state; the preview is a dumb applier that re-syncs on
+  // every mount. One writer, one source of truth.
+  const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
+
+  // Stable identity, or the bridge rebinds its listener every render.
+  const state = useMemo(() => ({ theme }), [theme]);
+  const { frameRef, onFrameLoad, resetFrame } = useSandboxBridge(state);
 
   return (
     <div className="flex h-dvh flex-col bg-[#15161d]">
       <header className="flex shrink-0 items-center gap-4 border-b border-white/10 px-4 py-2.5">
         <span className="text-[13px] font-medium text-white">{label}</span>
 
-        <div className="flex items-center gap-1 rounded-full bg-white/[0.06] p-1">
+        <Segmented>
           <ToolbarButton
             active={viewport === "desktop"}
             onClick={() => setViewport("desktop")}
@@ -56,18 +85,31 @@ export function SandboxShell({ screen }: { screen: string }) {
             <Smartphone className="size-3.5" strokeWidth={1.8} />
             Mobile
           </ToolbarButton>
-        </div>
+        </Segmented>
 
         <span className="text-[11px] text-white/35">
           {viewport === "desktop" ? "1440 × 931" : "390 × 844"}
         </span>
 
-        {/* Seams for the next milestone: theme toggle, interaction inspector,
-            code panel. Intentionally left as visible stubs. */}
+        <Segmented>
+          <ToolbarButton
+            active={theme === "dark"}
+            onClick={() => setTheme("dark")}
+          >
+            <Moon className="size-3.5" strokeWidth={1.8} />
+            Dark
+          </ToolbarButton>
+          <ToolbarButton
+            active={theme === "light"}
+            onClick={() => setTheme("light")}
+          >
+            <Sun className="size-3.5" strokeWidth={1.8} />
+            Light
+          </ToolbarButton>
+        </Segmented>
+
+        {/* Seam for the next milestone: the motion panel lands here. */}
         <div className="ml-auto flex items-center gap-3">
-          <span className="rounded-full border border-dashed border-white/15 px-2.5 py-1 text-[11px] text-white/30">
-            theme toggle — next
-          </span>
           <span className="rounded-full border border-dashed border-white/15 px-2.5 py-1 text-[11px] text-white/30">
             interactions — next
           </span>
@@ -83,7 +125,13 @@ export function SandboxShell({ screen }: { screen: string }) {
         </div>
       </header>
 
-      <DeviceFrame src={src} viewport={viewport} />
+      <DeviceFrame
+        src={src}
+        viewport={viewport}
+        frameRef={frameRef}
+        onLoad={onFrameLoad}
+        onRemount={resetFrame}
+      />
     </div>
   );
 }
