@@ -28,6 +28,7 @@ export function ActionCard({
   return (
     <button
       type="button"
+      data-sandbox-target={`action-card-${variant}`}
       className={[
         "group flex w-full flex-col items-center text-ink transition-colors",
         isMobile

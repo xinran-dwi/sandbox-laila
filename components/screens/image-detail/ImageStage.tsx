@@ -11,6 +11,7 @@ export function ImageStage() {
       <Photo
         src={mobileImage}
         alt="Generated image"
+        sandboxTarget="hero-photo-mobile"
         className="aspect-[390/320] w-full"
       />
 

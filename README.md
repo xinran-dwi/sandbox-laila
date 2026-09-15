@@ -9,8 +9,8 @@ pnpm dev
 ```
 
 - `/` — screen index
-- `/sandbox/image-detail` — sandbox shell: desktop / mobile and dark / light toggles around a
-  live preview
+- `/sandbox/image-detail` — sandbox shell: desktop / mobile and dark / light toggles, plus the
+  motion panel, around a live preview
 - `/preview/image-detail` — the screen on its own, no sandbox chrome
 
 ## How it's put together
@@ -102,8 +102,46 @@ what the design was measured against.
 against a light Figma frame — see `FIDELITY_REPORT.md`. Treat it as a starting point to react to,
 not a verified design.
 
+## Motion lab
+
+The right-hand panel applies animation to a registered element, live, and exports the result.
+It is **preview only** — nothing it does edits a screen component. The only permanent mark on
+the screens is an inert `data-sandbox-target` attribute.
+
+Adding an effect is a data change. Effects live in `lib/sandbox/effects/`, one object each,
+declaring a typed parameter schema and a builder that returns a structured payload. The panel
+renders its controls from that schema and has no per-effect knowledge, so effect #20 is an
+import and an array entry — `lib/sandbox/effects/index.ts` is the only file it touches.
+
+Three things make that hold up:
+
+**`kind` and `trigger` are separate.** `kind` is a browsing category with no behavior;
+`trigger` is the mechanism (`hover`, `press`, `manual`, `flag`, `event`). Conflating them
+would make "the same effect but on hover instead of press" a second effect file instead of a
+dropdown.
+
+**One payload, three renderers.** An effect writes declarations, never selectors. `css.ts`
+turns one payload into preview CSS, portable CSS and Tailwind, and they differ in exactly one
+thing: how the selector is spelled. The live preview is rendered by the same function the
+export button calls, so what you see and what you copy cannot disagree. Sandbox-internal
+attributes never reach exported code — `renderRules` takes a mode for precisely that reason.
+
+**Tunable values are custom properties.** Keyframes reference `var()` with the default baked
+in, so a keyframe body is constant and dragging a slider never recompiles it. That is what
+lets the exported Tailwind `@theme` block stay fixed while tuning is expressed as ordinary
+arbitrary-property utilities.
+
+`capabilities` on a target and `requires` on an effect decide what gets offered: shimmer needs
+`pseudo-after`, so it is never offered on a bare `<img>` (replaced elements can't host
+generated content) or on a button with no loading state.
+
+Two things are deliberately not derived. Confetti needs real JS to spawn particles, so it is
+marked `+JS` in the panel and its export snippet is hand-written and colocated with the runtime
+in `lib/sandbox/runtimes/burst.ts` — the one place with genuine duplication. And the loading
+state is **simulated**, not observed: `Photo.tsx` documents why a real `onLoad` can't be
+trusted, so the panel sets a flag for a chosen duration instead.
+
 ## Next
 
-A motion panel for exploring microinteractions on registered components, viewport switching
-beyond the two presets, and a code-view panel — the toolbar carries a visible stub where the
-motion panel lands.
+Composing several effects at once, stagger across `cardinality: "many"` targets, viewport
+switching beyond the two presets, and a code-view panel.

@@ -33,6 +33,9 @@ export function ResultFeedback({ variant }: { variant: "mobile" | "desktop" }) {
             <button
               key={value}
               type="button"
+              data-sandbox-target={
+                value === "up" ? `thumb-up-${variant}` : undefined
+              }
               aria-label={label}
               aria-pressed={selected}
               onClick={() => setRating(selected ? null : value)}

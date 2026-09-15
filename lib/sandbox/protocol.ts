@@ -23,12 +23,45 @@ export const CHANNEL = "sandbox-bridge";
 
 export type Theme = "dark" | "light";
 
+/**
+ * Armed confetti. The shell sends the tuned numbers; the preview spawns the
+ * particles and lets CSS move them.
+ */
+export type BurstConfig = {
+  targetId: string;
+  /** Prefixed keyframe name from the effect renderer. */
+  keyframe: string;
+  count: number;
+  distance: number;
+  size: number;
+  duration: number;
+  colors: string[];
+  /** Only fire when the clicked element ends up in this state. */
+  when?: { attr: string; equals: string };
+};
+
 /** Everything the shell controls about the previewed screen. */
 export type SandboxState = {
   theme: Theme;
+  /** Rendered effect CSS to inject, or "" for none. */
+  css: string;
+  /** The element the current effect applies to. */
+  targetId: string | null;
+  /** Simulated states set on that element, e.g. ["loading"]. */
+  flags: string[];
+  /** Bumped to replay a one-shot animation. */
+  play: number;
+  burst: BurstConfig | null;
 };
 
-export const DEFAULT_STATE: SandboxState = { theme: "dark" };
+export const DEFAULT_STATE: SandboxState = {
+  theme: "dark",
+  css: "",
+  targetId: null,
+  flags: [],
+  play: 0,
+  burst: null,
+};
 
 export type ParentMessage =
   /** Belt-and-braces re-ask on iframe load; the child answers with `ready`. */

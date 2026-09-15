@@ -15,11 +15,14 @@ export function Photo({
   alt,
   className = "",
   imgClassName = "",
+  sandboxTarget,
 }: {
   src: string;
   alt: string;
   className?: string;
   imgClassName?: string;
+  /** Opts this photo into the design sandbox's motion panel. Inert elsewhere. */
+  sandboxTarget?: string;
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -27,6 +30,7 @@ export function Photo({
     <div
       role="img"
       aria-label={alt}
+      data-sandbox-target={sandboxTarget}
       className={[
         "relative overflow-hidden bg-[linear-gradient(135deg,#2b2f7a_0%,#4a3b6e_45%,#8a5f3c_100%)]",
         className,

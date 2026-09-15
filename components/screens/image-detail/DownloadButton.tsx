@@ -7,6 +7,7 @@ export function DownloadButton({ variant }: { variant: "mobile" | "desktop" }) {
   return (
     <button
       type="button"
+      data-sandbox-target={`cta-download-${variant}`}
       className={[
         "flex w-full items-center justify-center gap-2 rounded-full",
         "bg-lime text-lime-ink transition-opacity hover:opacity-90",

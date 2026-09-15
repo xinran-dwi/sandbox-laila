@@ -74,6 +74,7 @@ export function DesktopViewer() {
       <Photo
         src={imageDetail.carousel.desktopImage}
         alt="Generated image"
+        sandboxTarget="hero-photo-desktop"
         className="relative z-[5] aspect-square w-[503px] max-w-[62%] rounded-[var(--radius-image)]"
       />
     </div>
