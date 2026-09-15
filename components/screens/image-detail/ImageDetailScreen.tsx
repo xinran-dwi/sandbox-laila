@@ -6,6 +6,7 @@ import { DownloadButton } from "./DownloadButton";
 import { ImageStage } from "./ImageStage";
 import { InfoBanner } from "./InfoBanner";
 import { MobileHeader } from "./MobileHeader";
+import { ResultFeedback } from "./ResultFeedback";
 
 export function ImageDetailScreen() {
   return (
@@ -21,8 +22,11 @@ export function ImageDetailScreen() {
           <ActionGrid variant="mobile" />
         </div>
         {/* CTA measured at y774-827, 17px above the bottom edge */}
-        <div className="mt-auto px-5 pb-[17px]">
-          <DownloadButton variant="mobile" />
+        <div className="mt-auto px-5 pb-[17px] pt-[18px]">
+          <ResultFeedback variant="mobile" />
+          <div className="mt-3">
+            <DownloadButton variant="mobile" />
+          </div>
         </div>
       </div>
 

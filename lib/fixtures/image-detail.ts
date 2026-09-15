@@ -36,6 +36,7 @@ export const imageDetail = {
   detailsPill: "Image details",
   notice:
     "You can generate content for your image to be shared on your social media accounts",
+  feedbackPrompt: "How is the result?",
   downloadCta: "Download Image",
   prompt:
     "Discover the latest Nike shoes, energized by a striking green smoke effect that symbolizes speed and innovation. Step into a world where style meets performance, and every move leaves  a trail of bold energy.",

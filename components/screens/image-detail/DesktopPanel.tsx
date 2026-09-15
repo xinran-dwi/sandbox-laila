@@ -4,6 +4,7 @@ import { ActionGrid } from "./ActionGrid";
 import { DownloadButton } from "./DownloadButton";
 import { IconButton } from "./IconButton";
 import { Photo } from "./Photo";
+import { ResultFeedback } from "./ResultFeedback";
 import { ThumbnailRail } from "./ThumbnailRail";
 
 function Divider() {
@@ -112,8 +113,11 @@ export function DesktopPanel() {
           </section>
         </div>
 
-        <div className="pt-[22px]">
-          <DownloadButton variant="desktop" />
+        <div className="pt-[18px]">
+          <ResultFeedback variant="desktop" />
+          <div className="mt-2.5">
+            <DownloadButton variant="desktop" />
+          </div>
         </div>
       </div>
 
